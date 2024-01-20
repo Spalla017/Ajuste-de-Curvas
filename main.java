@@ -1,495 +1,532 @@
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Scanner;
 
 public class Main {
-    public Main() {
-    }
+    public static void ajusteLinear(ArrayList<Double> x, ArrayList<Double> y, int tamanho){
+        // Arrays com os valores;
+        ArrayList<Double> xAoQuadrado = new ArrayList<>() ;
+        ArrayList<Double> xVezesY = new ArrayList<>() ;
+        ArrayList<Double> yAjustado = new ArrayList<>();
+        ArrayList<Double> yMenosYAjustadoAoQuadrado = new ArrayList<>();
+        ArrayList<Double> yAoQuadrado = new ArrayList<>();
 
-    public static void ajusteLinear(ArrayList<Double> x, ArrayList<Double> y, int tamanho) {
-        ArrayList<Double> xAoQuadrado = new ArrayList();
-        ArrayList<Double> xVezesY = new ArrayList();
-        ArrayList<Double> yAjustado = new ArrayList();
-        ArrayList<Double> yMenosYAjustadoAoQuadrado = new ArrayList();
-        ArrayList<Double> yAoQuadrado = new ArrayList();
-        double somatorioX = 0.0;
-        double somatorioY = 0.0;
-        double somatarioXAoQuadrado = 0.0;
-        double somatarioXVezesY = 0.0;
-        double somatorioYAjustado = 0.0;
-        double somatorioYMenosYAjustadoAoQuadrado = 0.0;
-        double somatorioYAoQuadrado = 0.0;
-        double a0 = 0.0;
-        double a1 = 0.0;
-        double rAoQuadrado = 0.0;
+        // Variaveis
+        double somatorioX = 0;
+        double somatorioY = 0;
+        double somatarioXAoQuadrado = 0;
+        double somatarioXVezesY = 0;
+        double somatorioYAjustado = 0;
+        double somatorioYMenosYAjustadoAoQuadrado = 0;
+        double somatorioYAoQuadrado = 0;
+        double a0 = 0;
+        double a1 = 0;
+        double rAoQuadrado = 0;
 
-        int i;
-        for(i = 0; i < tamanho; ++i) {
-            xAoQuadrado.add(Math.pow((Double)x.get(i), 2.0));
-            xVezesY.add((Double)x.get(i) * (Double)y.get(i));
-            yAoQuadrado.add(Math.pow((Double)y.get(i), 2.0));
+
+        // Preenchendo a tabela x ao quadrado e x vezes y
+        for(int i= 0 ; i < tamanho;i++){
+            xAoQuadrado.add(Math.pow(x.get(i).doubleValue(), 2));
+            xVezesY.add(x.get(i).doubleValue()*y.get(i).doubleValue());
+            yAoQuadrado.add(Math.pow(y.get(i).doubleValue(), 2));
         }
 
-        Double numeros;
-        Iterator var30;
-        for(var30 = x.iterator(); var30.hasNext(); somatorioX += numeros) {
-            numeros = (Double)var30.next();
+        //Realizando os Somatorios
+
+        for(Double numeros: x){
+            somatorioX += numeros.doubleValue();
         }
 
-        for(var30 = y.iterator(); var30.hasNext(); somatorioY += numeros) {
-            numeros = (Double)var30.next();
+        for(Double numeros: y){
+            somatorioY += numeros.doubleValue();
         }
 
-        for(var30 = xAoQuadrado.iterator(); var30.hasNext(); somatarioXAoQuadrado += numeros) {
-            numeros = (Double)var30.next();
+        for(Double numeros: xAoQuadrado){
+            somatarioXAoQuadrado += numeros.doubleValue();
+        }
+        for(Double numeros: xVezesY){
+            somatarioXVezesY += numeros.doubleValue();
+        }
+        for(Double numeros: yAoQuadrado){
+            somatorioYAoQuadrado += numeros.doubleValue();
         }
 
-        for(var30 = xVezesY.iterator(); var30.hasNext(); somatarioXVezesY += numeros) {
-            numeros = (Double)var30.next();
+        //Calculando a0 e a1
+        a0 = ((somatarioXAoQuadrado*somatorioY) - (somatorioX*somatarioXVezesY)) / ((tamanho*somatarioXAoQuadrado) - Math.pow(somatorioX, 2));
+        a1 = ((tamanho*somatarioXVezesY) - (somatorioX*somatorioY)) / ((tamanho*somatarioXAoQuadrado) - Math.pow(somatorioX, 2));
+
+
+
+        //Preenchendo a tabela do yAjustado e yMenosYAjustadoAoQuadrado
+        for(int i = 0; i < tamanho; i++){
+            yAjustado.add(a0+(a1*x.get(i).doubleValue()));
+            yMenosYAjustadoAoQuadrado.add(Math.pow(y.get(i).doubleValue() - yAjustado.get(i).doubleValue(), 2));
         }
 
-        for(var30 = yAoQuadrado.iterator(); var30.hasNext(); somatorioYAoQuadrado += numeros) {
-            numeros = (Double)var30.next();
+        //Somatorio de yAjustado e yMenosYAjustadoAoQuadrado
+        for(Double numeros: yAjustado){
+            somatorioYAjustado += numeros.doubleValue();
+        }
+        for(Double numeros: yMenosYAjustadoAoQuadrado){
+            somatorioYMenosYAjustadoAoQuadrado += numeros.doubleValue();
         }
 
-        a0 = (somatarioXAoQuadrado * somatorioY - somatorioX * somatarioXVezesY) / ((double)tamanho * somatarioXAoQuadrado - Math.pow(somatorioX, 2.0));
-        a1 = ((double)tamanho * somatarioXVezesY - somatorioX * somatorioY) / ((double)tamanho * somatarioXAoQuadrado - Math.pow(somatorioX, 2.0));
+        rAoQuadrado = 1 - (tamanho*somatorioYMenosYAjustadoAoQuadrado) / (tamanho*somatorioYAoQuadrado - (Math.pow(somatorioYAjustado, 2)));
 
-        for(i = 0; i < tamanho; ++i) {
-            yAjustado.add(a0 + a1 * (Double)x.get(i));
-            yMenosYAjustadoAoQuadrado.add(Math.pow((Double)y.get(i) - (Double)yAjustado.get(i), 2.0));
-        }
-
-        for(var30 = yAjustado.iterator(); var30.hasNext(); somatorioYAjustado += numeros) {
-            numeros = (Double)var30.next();
-        }
-
-        for(var30 = yMenosYAjustadoAoQuadrado.iterator(); var30.hasNext(); somatorioYMenosYAjustadoAoQuadrado += numeros) {
-            numeros = (Double)var30.next();
-        }
-
-        rAoQuadrado = 1.0 - (double)tamanho * somatorioYMenosYAjustadoAoQuadrado / ((double)tamanho * somatorioYAoQuadrado - Math.pow(somatorioYAjustado, 2.0));
+        //System.out.println("y = "+a0+" + "+a1+"x");
         System.out.println(rAoQuadrado);
+
+
+
     }
+    public static void ajusteParabolico(ArrayList<Double> x, ArrayList<Double> y, int tamanho){
 
-    public static void ajusteParabolico(ArrayList<Double> x, ArrayList<Double> y, int tamanho) {
-        ArrayList<Double> xAoQuadrado = new ArrayList();
-        ArrayList<Double> xAoCubo = new ArrayList();
-        ArrayList<Double> xElevadoAquatro = new ArrayList();
-        ArrayList<Double> xVezesY = new ArrayList();
-        ArrayList<Double> xAoQuadradoVezesY = new ArrayList();
-        double somatorioX = 0.0;
-        double somatorioY = 0.0;
-        double somatarioXAoQuadrado = 0.0;
-        double somatorioXAoCubo = 0.0;
-        double somatorioXElevadoAQuatro = 0.0;
-        double somatarioXVezesY = 0.0;
-        double somatorioXAoQuadradoVezesY = 0.0;
+        // Arrays com os valores;
+        ArrayList<Double> xAoQuadrado = new ArrayList<>();
+        ArrayList<Double> xAoCubo = new ArrayList<>();
+        ArrayList<Double> xElevadoAquatro = new ArrayList<>();
+        ArrayList<Double> xVezesY = new ArrayList<>();
+        ArrayList<Double> xAoQuadradoVezesY = new ArrayList<>();
 
-        for(int i = 0; i < tamanho; ++i) {
-            xAoQuadrado.add(Math.pow((Double)x.get(i), 2.0));
-            xAoCubo.add(Math.pow((Double)x.get(i), 3.0));
-            xElevadoAquatro.add(Math.pow((Double)x.get(i), 4.0));
-            xVezesY.add((Double)x.get(i) * (Double)y.get(i));
-            xAoQuadradoVezesY.add(Math.pow((Double)x.get(i), 2.0) * (Double)y.get(i));
+        // Variaveis
+        double somatorioX = 0;
+        double somatorioY = 0;
+        double somatarioXAoQuadrado = 0;
+        double somatorioXAoCubo = 0;
+        double somatorioXElevadoAQuatro = 0;
+        double somatarioXVezesY = 0;
+        double somatorioXAoQuadradoVezesY = 0;
+
+        // Preenchendo as tableas
+        for(int i= 0 ; i < tamanho;i++){
+            xAoQuadrado.add(Math.pow(x.get(i).doubleValue(), 2));
+            xAoCubo.add(Math.pow(x.get(i).doubleValue(), 3));
+            xElevadoAquatro.add(Math.pow(x.get(i).doubleValue(), 4));
+            xVezesY.add(x.get(i).doubleValue()*y.get(i).doubleValue());
+            xAoQuadradoVezesY.add(Math.pow(x.get(i), 2) * y.get(i));
         }
-
-        Double numeros;
-        Iterator var30;
-        for(var30 = x.iterator(); var30.hasNext(); somatorioX += numeros) {
-            numeros = (Double)var30.next();
+        //Realizando os Somatorios
+        for(Double numeros: x){
+            somatorioX += numeros.doubleValue();
         }
-
-        for(var30 = y.iterator(); var30.hasNext(); somatorioY += numeros) {
-            numeros = (Double)var30.next();
+        for(Double numeros: y){
+            somatorioY += numeros.doubleValue();
         }
-
-        for(var30 = xAoQuadrado.iterator(); var30.hasNext(); somatarioXAoQuadrado += numeros) {
-            numeros = (Double)var30.next();
+        for(Double numeros: xAoQuadrado){
+            somatarioXAoQuadrado += numeros.doubleValue();
         }
-
-        for(var30 = xAoCubo.iterator(); var30.hasNext(); somatorioXAoCubo += numeros) {
-            numeros = (Double)var30.next();
+        for(Double numeros: xAoCubo){
+            somatorioXAoCubo += numeros.doubleValue();
         }
-
-        for(var30 = xElevadoAquatro.iterator(); var30.hasNext(); somatorioXElevadoAQuatro += numeros) {
-            numeros = (Double)var30.next();
+        for(Double numeros: xElevadoAquatro){
+            somatorioXElevadoAQuatro += numeros.doubleValue();
         }
-
-        for(var30 = xVezesY.iterator(); var30.hasNext(); somatarioXVezesY += numeros) {
-            numeros = (Double)var30.next();
+        for(Double numeros: xVezesY){
+            somatarioXVezesY += numeros.doubleValue();
         }
-
-        for(var30 = xAoQuadradoVezesY.iterator(); var30.hasNext(); somatorioXAoQuadradoVezesY += numeros) {
-            numeros = (Double)var30.next();
+        for(Double numeros: xAoQuadradoVezesY){
+            somatorioXAoQuadradoVezesY += numeros.doubleValue();
         }
-
-        double[][] matrizA = new double[][]{{(double)tamanho, somatorioX, somatarioXAoQuadrado}, {somatorioX, somatarioXAoQuadrado, somatorioXAoCubo}, {somatarioXAoQuadrado, somatorioXAoCubo, somatorioXElevadoAQuatro}};
+        //Matriz com os valores
+        double[][] matrizA = new double[][]{{tamanho, somatorioX, somatarioXAoQuadrado},{somatorioX, somatarioXAoQuadrado, somatorioXAoCubo},
+                {somatarioXAoQuadrado,somatorioXAoCubo,somatorioXElevadoAQuatro}};
         double[] matrizB = new double[]{somatorioY, somatarioXVezesY, somatorioXAoQuadradoVezesY};
-        double[] resposta = new double[]{0.0, 0.0, 0.0};
+        double[] resposta = new double[]{0,0,0};
 
-        for(int i = 0; i < 3; ++i) {
-            double somatorio = 0.0;
+
+        for(int i = 0; i < 3; i++){
+            double somatorio = 0;
             int z = 0;
-
-            for(int j = 0; j < 3; ++j) {
-                somatorio += matrizA[i][j] * matrizB[z];
-                System.out.println("valor somatorio: " + somatorio);
-                ++z;
+            for(int j = 0; j<3; j++){
+                somatorio = somatorio + matrizA[i][j] * matrizB[z];
+                System.out.println("valor somatorio: "+somatorio);
+                z++;
             }
-
-            System.out.println("valor somatorio final:" + somatorio);
+            System.out.println("valor somatorio final:"+ somatorio);
             resposta[i] = somatorio;
         }
 
+
+
     }
+    public static void ajusteExponencial(ArrayList<Double> x, ArrayList<Double> y, int tamanho){
 
-    public static void ajusteExponencial(ArrayList<Double> x, ArrayList<Double> y, int tamanho) {
-        ArrayList<Double> yLinha = new ArrayList();
+        ArrayList<Double> yLinha = new ArrayList<>();
+        //Ajustando a variavel de acordo com o método
+        for(int i = 0; i < y.size(); i++){
+            yLinha.add(Math.log(y.get(i).doubleValue()));
 
-        for(int i = 0; i < y.size(); ++i) {
-            yLinha.add(Math.log((Double)y.get(i)));
         }
 
-        ArrayList<Double> xAoQuadrado = new ArrayList();
-        ArrayList<Double> xVezesY = new ArrayList();
-        ArrayList<Double> yAjustado = new ArrayList();
-        ArrayList<Double> yMenosYAjustadoAoQuadrado = new ArrayList();
-        ArrayList<Double> yAoQuadrado = new ArrayList();
-        double somatorioX = 0.0;
-        double somatorioY = 0.0;
-        double somatarioXAoQuadrado = 0.0;
-        double somatarioXVezesY = 0.0;
-        double somatorioYAjustado = 0.0;
-        double somatorioYMenosYAjustadoAoQuadrado = 0.0;
-        double somatorioYAoQuadrado = 0.0;
-        double a = 0.0;
-        double b = 0.0;
-        double a0 = 0.0;
-        double a1 = 0.0;
-        double rAoQuadrado = 0.0;
+        ArrayList<Double> xAoQuadrado = new ArrayList<>() ;
+        ArrayList<Double> xVezesY = new ArrayList<>() ;
+        ArrayList<Double> yAjustado = new ArrayList<>();
+        ArrayList<Double> yMenosYAjustadoAoQuadrado = new ArrayList<>();
+        ArrayList<Double> yAoQuadrado = new ArrayList<>();
 
-        int i;
-        for(i = 0; i < tamanho; ++i) {
-            xAoQuadrado.add(Math.pow((Double)x.get(i), 2.0));
-            xVezesY.add((Double)x.get(i) * (Double)yLinha.get(i));
-            yAoQuadrado.add(Math.pow((Double)yLinha.get(i), 2.0));
+        // Variaveis
+        double somatorioX = 0;
+        double somatorioY = 0;
+        double somatarioXAoQuadrado = 0;
+        double somatarioXVezesY = 0;
+        double somatorioYAjustado = 0;
+        double somatorioYMenosYAjustadoAoQuadrado = 0;
+        double somatorioYAoQuadrado = 0;
+        double a = 0;
+        double b = 0;
+        double a0 = 0;
+        double a1 = 0;
+        double rAoQuadrado = 0;
+
+        // Preenchendo a tabela x ao quadrado e x vezes y
+        for(int i= 0 ; i < tamanho;i++){
+            xAoQuadrado.add(Math.pow(x.get(i).doubleValue(), 2));
+            xVezesY.add(x.get(i).doubleValue()*yLinha.get(i).doubleValue());
+            yAoQuadrado.add(Math.pow(yLinha.get(i).doubleValue(), 2));
         }
 
-        Double numeros;
-        Iterator var36;
-        for(var36 = x.iterator(); var36.hasNext(); somatorioX += numeros) {
-            numeros = (Double)var36.next();
+        //Realizando os Somatorios
+
+        for(Double numeros: x){
+            somatorioX += numeros.doubleValue();
         }
 
-        for(var36 = yLinha.iterator(); var36.hasNext(); somatorioY += numeros) {
-            numeros = (Double)var36.next();
+        for(Double numeros: yLinha){
+            somatorioY += numeros.doubleValue();
         }
 
-        for(var36 = xAoQuadrado.iterator(); var36.hasNext(); somatarioXAoQuadrado += numeros) {
-            numeros = (Double)var36.next();
+        for(Double numeros: xAoQuadrado){
+            somatarioXAoQuadrado += numeros.doubleValue();
+        }
+        for(Double numeros: xVezesY){
+            somatarioXVezesY += numeros.doubleValue();
+        }
+        for(Double numeros: yAoQuadrado){
+            somatorioYAoQuadrado += numeros.doubleValue();
+        }
+        //Calculando a0 e a1
+
+        a0 = ((somatarioXAoQuadrado*somatorioY) - (somatorioX*somatarioXVezesY)) / ((tamanho*somatarioXAoQuadrado) - Math.pow(somatorioX, 2));
+        a1 = ((tamanho*somatarioXVezesY) - (somatorioX*somatorioY)) / ((tamanho*somatarioXAoQuadrado) - Math.pow(somatorioX, 2));
+
+        //System.out.println(a0);
+        //System.out.println(a1);
+        //Preenchendo a tabela do yAjustado e yMenosYAjustadoAoQuadrado
+        for(int i = 0; i < tamanho; i++){
+            yAjustado.add(a0+(a1*x.get(i).doubleValue()));
+            yMenosYAjustadoAoQuadrado.add(Math.pow(yLinha.get(i).doubleValue() - yAjustado.get(i).doubleValue(), 2));
         }
 
-        for(var36 = xVezesY.iterator(); var36.hasNext(); somatarioXVezesY += numeros) {
-            numeros = (Double)var36.next();
+        //Somatorio de yAjustado e yMenosYAjustadoAoQuadrado
+        for(Double numeros: yAjustado){
+            somatorioYAjustado += numeros.doubleValue();
+        }
+        for(Double numeros: yMenosYAjustadoAoQuadrado){
+            somatorioYMenosYAjustadoAoQuadrado += numeros.doubleValue();
         }
 
-        for(var36 = yAoQuadrado.iterator(); var36.hasNext(); somatorioYAoQuadrado += numeros) {
-            numeros = (Double)var36.next();
-        }
-
-        a0 = (somatarioXAoQuadrado * somatorioY - somatorioX * somatarioXVezesY) / ((double)tamanho * somatarioXAoQuadrado - Math.pow(somatorioX, 2.0));
-        a1 = ((double)tamanho * somatarioXVezesY - somatorioX * somatorioY) / ((double)tamanho * somatarioXAoQuadrado - Math.pow(somatorioX, 2.0));
-
-        for(i = 0; i < tamanho; ++i) {
-            yAjustado.add(a0 + a1 * (Double)x.get(i));
-            yMenosYAjustadoAoQuadrado.add(Math.pow((Double)yLinha.get(i) - (Double)yAjustado.get(i), 2.0));
-        }
-
-        for(var36 = yAjustado.iterator(); var36.hasNext(); somatorioYAjustado += numeros) {
-            numeros = (Double)var36.next();
-        }
-
-        for(var36 = yMenosYAjustadoAoQuadrado.iterator(); var36.hasNext(); somatorioYMenosYAjustadoAoQuadrado += numeros) {
-            numeros = (Double)var36.next();
-        }
-
-        a = Math.pow(Math.E, a0);
-        rAoQuadrado = 1.0 - (double)tamanho * somatorioYMenosYAjustadoAoQuadrado / ((double)tamanho * somatorioYAoQuadrado - Math.pow(somatorioYAjustado, 2.0));
-        System.out.println(rAoQuadrado);
-    }
-
-    public static void ajusteLogaritmico(ArrayList<Double> x, ArrayList<Double> y, int tamanho) {
-        ArrayList<Double> xLinha = new ArrayList();
-
-        for(int i = 0; i < x.size(); ++i) {
-            xLinha.add(Math.log((Double)x.get(i)));
-        }
-
-        ArrayList<Double> xAoQuadrado = new ArrayList();
-        ArrayList<Double> xVezesY = new ArrayList();
-        ArrayList<Double> yAjustado = new ArrayList();
-        ArrayList<Double> yMenosYAjustadoAoQuadrado = new ArrayList();
-        ArrayList<Double> yAoQuadrado = new ArrayList();
-        double somatorioX = 0.0;
-        double somatorioY = 0.0;
-        double somatarioXAoQuadrado = 0.0;
-        double somatarioXVezesY = 0.0;
-        double somatorioYAjustado = 0.0;
-        double somatorioYMenosYAjustadoAoQuadrado = 0.0;
-        double somatorioYAoQuadrado = 0.0;
-        double a = 0.0;
-        double b = 0.0;
-        double a0 = 0.0;
-        double a1 = 0.0;
-        double rAoQuadrado = 0.0;
-
-        int i;
-        for(i = 0; i < tamanho; ++i) {
-            xAoQuadrado.add(Math.pow((Double)xLinha.get(i), 2.0));
-            xVezesY.add((Double)xLinha.get(i) * (Double)y.get(i));
-            yAoQuadrado.add(Math.pow((Double)y.get(i), 2.0));
-        }
-
-        Double numeros;
-        Iterator var36;
-        for(var36 = xLinha.iterator(); var36.hasNext(); somatorioX += numeros) {
-            numeros = (Double)var36.next();
-        }
-
-        for(var36 = y.iterator(); var36.hasNext(); somatorioY += numeros) {
-            numeros = (Double)var36.next();
-        }
-
-        for(var36 = xAoQuadrado.iterator(); var36.hasNext(); somatarioXAoQuadrado += numeros) {
-            numeros = (Double)var36.next();
-        }
-
-        for(var36 = xVezesY.iterator(); var36.hasNext(); somatarioXVezesY += numeros) {
-            numeros = (Double)var36.next();
-        }
-
-        for(var36 = yAoQuadrado.iterator(); var36.hasNext(); somatorioYAoQuadrado += numeros) {
-            numeros = (Double)var36.next();
-        }
-
-        a0 = (somatarioXAoQuadrado * somatorioY - somatorioX * somatarioXVezesY) / ((double)tamanho * somatarioXAoQuadrado - Math.pow(somatorioX, 2.0));
-        a1 = ((double)tamanho * somatarioXVezesY - somatorioX * somatorioY) / ((double)tamanho * somatarioXAoQuadrado - Math.pow(somatorioX, 2.0));
-
-        for(i = 0; i < tamanho; ++i) {
-            yAjustado.add(a0 + a1 * (Double)xLinha.get(i));
-            yMenosYAjustadoAoQuadrado.add(Math.pow((Double)y.get(i) - (Double)yAjustado.get(i), 2.0));
-        }
-
-        for(var36 = yAjustado.iterator(); var36.hasNext(); somatorioYAjustado += numeros) {
-            numeros = (Double)var36.next();
-        }
-
-        for(var36 = yMenosYAjustadoAoQuadrado.iterator(); var36.hasNext(); somatorioYMenosYAjustadoAoQuadrado += numeros) {
-            numeros = (Double)var36.next();
-        }
-
-        rAoQuadrado = 1.0 - (double)tamanho * somatorioYMenosYAjustadoAoQuadrado / ((double)tamanho * somatorioYAoQuadrado - Math.pow(somatorioYAjustado, 2.0));
-        System.out.println(rAoQuadrado);
-    }
-
-    public static void ajustePotencial(ArrayList<Double> x, ArrayList<Double> y, int tamanho) {
-        ArrayList<Double> xLinha = new ArrayList();
-        ArrayList<Double> yLinha = new ArrayList();
-
-        int i;
-        for(i = 0; i < x.size(); ++i) {
-            xLinha.add(Math.log((Double)x.get(i)));
-        }
-
-        for(i = 0; i < y.size(); ++i) {
-            yLinha.add(Math.log((Double)y.get(i)));
-        }
-
-        ArrayList<Double> xAoQuadrado = new ArrayList();
-        ArrayList<Double> xVezesY = new ArrayList();
-        ArrayList<Double> yAjustado = new ArrayList();
-        ArrayList<Double> yMenosYAjustadoAoQuadrado = new ArrayList();
-        ArrayList<Double> yAoQuadrado = new ArrayList();
-        double somatorioX = 0.0;
-        double somatorioY = 0.0;
-        double somatarioXAoQuadrado = 0.0;
-        double somatarioXVezesY = 0.0;
-        double somatorioYAjustado = 0.0;
-        double somatorioYMenosYAjustadoAoQuadrado = 0.0;
-        double somatorioYAoQuadrado = 0.0;
-        double a = 0.0;
-        double b = 0.0;
-        double a0 = 0.0;
-        double a1 = 0.0;
-        double rAoQuadrado = 0.0;
-
-        int i;
-        for(i = 0; i < tamanho; ++i) {
-            xAoQuadrado.add(Math.pow((Double)xLinha.get(i), 2.0));
-            xVezesY.add((Double)xLinha.get(i) * (Double)yLinha.get(i));
-            yAoQuadrado.add(Math.pow((Double)yLinha.get(i), 2.0));
-        }
-
-        Double numeros;
-        Iterator var37;
-        for(var37 = xLinha.iterator(); var37.hasNext(); somatorioX += numeros) {
-            numeros = (Double)var37.next();
-        }
-
-        for(var37 = yLinha.iterator(); var37.hasNext(); somatorioY += numeros) {
-            numeros = (Double)var37.next();
-        }
-
-        for(var37 = xAoQuadrado.iterator(); var37.hasNext(); somatarioXAoQuadrado += numeros) {
-            numeros = (Double)var37.next();
-        }
-
-        for(var37 = xVezesY.iterator(); var37.hasNext(); somatarioXVezesY += numeros) {
-            numeros = (Double)var37.next();
-        }
-
-        for(var37 = yAoQuadrado.iterator(); var37.hasNext(); somatorioYAoQuadrado += numeros) {
-            numeros = (Double)var37.next();
-        }
-
-        a0 = (somatarioXAoQuadrado * somatorioY - somatorioX * somatarioXVezesY) / ((double)tamanho * somatarioXAoQuadrado - Math.pow(somatorioX, 2.0));
-        a1 = ((double)tamanho * somatarioXVezesY - somatorioX * somatorioY) / ((double)tamanho * somatarioXAoQuadrado - Math.pow(somatorioX, 2.0));
         a = Math.pow(Math.E, a0);
         b = a1;
 
-        for(i = 0; i < tamanho; ++i) {
-            yAjustado.add(a * Math.pow((Double)xLinha.get(i), b));
-            PrintStream var10000 = System.out;
-            Object var10001 = yAjustado.get(i);
-            var10000.println("yaj = " + (Double)var10001);
-            yMenosYAjustadoAoQuadrado.add(Math.pow((Double)y.get(i) - (Double)yAjustado.get(i), 2.0));
+        //System.out.println("y = "+a+" . e^"+b+"x");
+        rAoQuadrado = 1 - (tamanho*somatorioYMenosYAjustadoAoQuadrado) / (tamanho*somatorioYAoQuadrado - (Math.pow(somatorioYAjustado, 2)));
+        System.out.println(rAoQuadrado);
+
+
+
+
+    }
+    public static void ajusteLogaritmico(ArrayList<Double> x, ArrayList<Double> y, int tamanho){
+
+        ArrayList<Double> xLinha = new ArrayList<>();
+        //Ajustando a variavel de acordo com o método
+        for(int i = 0; i < x.size(); i++){
+            xLinha.add(Math.log(x.get(i).doubleValue()));
         }
 
-        for(var37 = yAjustado.iterator(); var37.hasNext(); somatorioYAjustado += numeros) {
-            numeros = (Double)var37.next();
+        ArrayList<Double> xAoQuadrado = new ArrayList<>() ;
+        ArrayList<Double> xVezesY = new ArrayList<>() ;
+        ArrayList<Double> yAjustado = new ArrayList<>();
+        ArrayList<Double> yMenosYAjustadoAoQuadrado = new ArrayList<>();
+        ArrayList<Double> yAoQuadrado = new ArrayList<>();
+
+        // Variaveis
+        double somatorioX = 0;
+        double somatorioY = 0;
+        double somatarioXAoQuadrado = 0;
+        double somatarioXVezesY = 0;
+        double somatorioYAjustado = 0;
+        double somatorioYMenosYAjustadoAoQuadrado = 0;
+        double somatorioYAoQuadrado = 0;
+        double a = 0;
+        double b = 0;
+        double a0 = 0;
+        double a1 = 0;
+        double rAoQuadrado = 0;
+
+        // Preenchendo a tabela x ao quadrado e x vezes y
+        for(int i= 0 ; i < tamanho;i++){
+            xAoQuadrado.add(Math.pow(xLinha.get(i).doubleValue(), 2));
+            xVezesY.add(xLinha.get(i).doubleValue()*y.get(i).doubleValue());
+            yAoQuadrado.add(Math.pow(y.get(i).doubleValue(), 2));
         }
 
-        for(var37 = yMenosYAjustadoAoQuadrado.iterator(); var37.hasNext(); somatorioYMenosYAjustadoAoQuadrado += numeros) {
-            numeros = (Double)var37.next();
+        //Realizando os Somatorios
+
+        for(Double numeros: xLinha){
+            somatorioX += numeros.doubleValue();
         }
 
-        rAoQuadrado = 1.0 - (double)tamanho * somatorioYMenosYAjustadoAoQuadrado / ((double)tamanho * somatorioYAoQuadrado - Math.pow(somatorioYAjustado, 2.0));
+        for(Double numeros: y){
+            somatorioY += numeros.doubleValue();
+        }
+
+        for(Double numeros: xAoQuadrado){
+            somatarioXAoQuadrado += numeros.doubleValue();
+        }
+        for(Double numeros: xVezesY){
+            somatarioXVezesY += numeros.doubleValue();
+        }
+        for(Double numeros: yAoQuadrado){
+            somatorioYAoQuadrado += numeros.doubleValue();
+        }
+        //Calculando a0 e a1
+
+        a0 = ((somatarioXAoQuadrado*somatorioY) - (somatorioX*somatarioXVezesY)) / ((tamanho*somatarioXAoQuadrado) - Math.pow(somatorioX, 2));
+        a1 = ((tamanho*somatarioXVezesY) - (somatorioX*somatorioY)) / ((tamanho*somatarioXAoQuadrado) - Math.pow(somatorioX, 2));
+
+        //System.out.println(a0);
+        //System.out.println(a1);
+        //Preenchendo a tabela do yAjustado e yMenosYAjustadoAoQuadrado
+        for(int i = 0; i < tamanho; i++){
+            yAjustado.add(a0+(a1*xLinha.get(i).doubleValue()));
+            yMenosYAjustadoAoQuadrado.add(Math.pow(y.get(i).doubleValue() - yAjustado.get(i).doubleValue(), 2));
+        }
+
+        //Somatorio de yAjustado e yMenosYAjustadoAoQuadrado
+        for(Double numeros: yAjustado){
+            somatorioYAjustado += numeros.doubleValue();
+        }
+        for(Double numeros: yMenosYAjustadoAoQuadrado){
+            somatorioYMenosYAjustadoAoQuadrado += numeros.doubleValue();
+        }
+
+        a = a0;
+        b = a1;
+
+        //System.out.println("y = "+a+"+"+b+".lnx");
+        rAoQuadrado = 1 - (tamanho*somatorioYMenosYAjustadoAoQuadrado) / (tamanho*somatorioYAoQuadrado - (Math.pow(somatorioYAjustado, 2)));
         System.out.println(rAoQuadrado);
     }
+    public static void ajustePotencial(ArrayList<Double> x, ArrayList<Double> y, int tamanho){
+        ArrayList<Double> xLinha = new ArrayList<>();
+        ArrayList<Double> yLinha = new ArrayList<>();
+        //Ajustando a variavel de acordo com o método
+        for(int i = 0; i < x.size(); i++){
+            xLinha.add(Math.log(x.get(i).doubleValue()));
+        }
+        for(int i = 0; i < y.size(); i++){
+            yLinha.add(Math.log(y.get(i).doubleValue()));
+        }
 
-    public static void ajusteHiperbolico(ArrayList<Double> x, ArrayList<Double> y, int tamanho) {
-        for(int i = 0; i < x.size(); ++i) {
-            double xNovo = 0.0;
-            xNovo = 1.0 / (Double)x.get(i);
+
+        ArrayList<Double> xAoQuadrado = new ArrayList<>() ;
+        ArrayList<Double> xVezesY = new ArrayList<>() ;
+        ArrayList<Double> yAjustado = new ArrayList<>();
+        ArrayList<Double> yMenosYAjustadoAoQuadrado = new ArrayList<>();
+        ArrayList<Double> yAoQuadrado = new ArrayList<>();
+
+        // Variaveis
+        double somatorioX = 0;
+        double somatorioY = 0;
+        double somatarioXAoQuadrado = 0;
+        double somatarioXVezesY = 0;
+        double somatorioYAjustado = 0;
+        double somatorioYMenosYAjustadoAoQuadrado = 0;
+        double somatorioYAoQuadrado = 0;
+        double a = 0;
+        double b = 0;
+        double a0 = 0;
+        double a1 = 0;
+        double rAoQuadrado = 0;
+
+        // Preenchendo a tabela x ao quadrado e x vezes y
+        for(int i= 0 ; i < tamanho;i++){
+            xAoQuadrado.add(Math.pow(xLinha.get(i).doubleValue(), 2));
+            xVezesY.add(xLinha.get(i).doubleValue()*yLinha.get(i).doubleValue());
+            yAoQuadrado.add(Math.pow(yLinha.get(i).doubleValue(), 2));
+        }
+
+        //Realizando os Somatorios
+
+        for(Double numeros: xLinha){
+            somatorioX += numeros.doubleValue();
+        }
+
+        for(Double numeros: yLinha){
+            somatorioY += numeros.doubleValue();
+        }
+
+        for(Double numeros: xAoQuadrado){
+            somatarioXAoQuadrado += numeros.doubleValue();
+        }
+        for(Double numeros: xVezesY){
+            somatarioXVezesY += numeros.doubleValue();
+        }
+        for(Double numeros: yAoQuadrado){
+            somatorioYAoQuadrado += numeros.doubleValue();
+        }
+        //Calculando a0 e a1
+
+        a0 = ((somatarioXAoQuadrado*somatorioY) - (somatorioX*somatarioXVezesY)) / ((tamanho*somatarioXAoQuadrado) - Math.pow(somatorioX, 2));
+        a1 = ((tamanho*somatarioXVezesY) - (somatorioX*somatorioY)) / ((tamanho*somatarioXAoQuadrado) - Math.pow(somatorioX, 2));
+
+        //System.out.println(a0);
+        //System.out.println(a1);
+        //Preenchendo a tabela do yAjustado e yMenosYAjustadoAoQuadrado
+        for(int i = 0; i < tamanho; i++){
+            yAjustado.add(a0*(Math.pow(xLinha.get(i).doubleValue(),a1)));
+            yMenosYAjustadoAoQuadrado.add(Math.pow(y.get(i).doubleValue() - yAjustado.get(i).doubleValue(), 2));
+        }
+
+        //Somatorio de yAjustado e yMenosYAjustadoAoQuadrado
+        for(Double numeros: yAjustado){
+            somatorioYAjustado += numeros.doubleValue();
+        }
+        for(Double numeros: yMenosYAjustadoAoQuadrado){
+            somatorioYMenosYAjustadoAoQuadrado += numeros.doubleValue();
+        }
+
+        a = Math.pow(Math.E, a0);
+        b = a1;
+
+        //System.out.println("y = "+a+".x^"+b);
+        rAoQuadrado = 1 - (tamanho*somatorioYMenosYAjustadoAoQuadrado) / (tamanho*somatorioYAoQuadrado - (Math.pow(somatorioYAjustado, 2)));
+        System.out.println(rAoQuadrado);
+    }
+    public static void ajusteHiperbolico(ArrayList<Double> x, ArrayList<Double> y, int tamanho){
+        //Ajustando a variavel de acordo com o método
+        for(int i = 0; i < x.size(); i++){
+            double xNovo = 0;
+            xNovo = 1/x.get(i).doubleValue();
+
             x.set(i, xNovo);
         }
 
-        ArrayList<Double> xAoQuadrado = new ArrayList();
-        ArrayList<Double> xVezesY = new ArrayList();
-        ArrayList<Double> yAjustado = new ArrayList();
-        ArrayList<Double> yMenosYAjustadoAoQuadrado = new ArrayList();
-        ArrayList<Double> yAoQuadrado = new ArrayList();
-        double somatorioX = 0.0;
-        double somatorioY = 0.0;
-        double somatarioXAoQuadrado = 0.0;
-        double somatarioXVezesY = 0.0;
-        double somatorioYAjustado = 0.0;
-        double somatorioYMenosYAjustadoAoQuadrado = 0.0;
-        double somatorioYAoQuadrado = 0.0;
-        double a = 0.0;
-        double b = 0.0;
-        double a0 = 0.0;
-        double a1 = 0.0;
-        double rAoQuadrado = 0.0;
+        ArrayList<Double> xAoQuadrado = new ArrayList<>() ;
+        ArrayList<Double> xVezesY = new ArrayList<>() ;
+        ArrayList<Double> yAjustado = new ArrayList<>();
+        ArrayList<Double> yMenosYAjustadoAoQuadrado = new ArrayList<>();
+        ArrayList<Double> yAoQuadrado = new ArrayList<>();
 
-        int i;
-        for(i = 0; i < tamanho; ++i) {
-            xAoQuadrado.add(Math.pow((Double)x.get(i), 2.0));
-            xVezesY.add((Double)x.get(i) * (Double)y.get(i));
-            yAoQuadrado.add(Math.pow((Double)y.get(i), 2.0));
+        // Variaveis
+        double somatorioX = 0;
+        double somatorioY = 0;
+        double somatarioXAoQuadrado = 0;
+        double somatarioXVezesY = 0;
+        double somatorioYAjustado = 0;
+        double somatorioYMenosYAjustadoAoQuadrado = 0;
+        double somatorioYAoQuadrado = 0;
+        double a = 0;
+        double b = 0;
+        double a0 = 0;
+        double a1 = 0;
+        double rAoQuadrado = 0;
+
+        // Preenchendo a tabela x ao quadrado e x vezes y
+        for(int i= 0 ; i < tamanho;i++){
+            xAoQuadrado.add(Math.pow(x.get(i).doubleValue(), 2));
+            xVezesY.add(x.get(i).doubleValue()*y.get(i).doubleValue());
+            yAoQuadrado.add(Math.pow(y.get(i).doubleValue(), 2));
         }
 
-        Double numeros;
-        Iterator var36;
-        for(var36 = x.iterator(); var36.hasNext(); somatorioX += numeros) {
-            numeros = (Double)var36.next();
+        //Realizando os Somatorios
+
+        for(Double numeros: x){
+            somatorioX += numeros.doubleValue();
+        }
+        for(Double numeros: y){
+            somatorioY += numeros.doubleValue();
         }
 
-        for(var36 = y.iterator(); var36.hasNext(); somatorioY += numeros) {
-            numeros = (Double)var36.next();
+        for(Double numeros: xAoQuadrado){
+            somatarioXAoQuadrado += numeros.doubleValue();
+        }
+        for(Double numeros: xVezesY){
+            somatarioXVezesY += numeros.doubleValue();
+        }
+        for(Double numeros: yAoQuadrado){
+            somatorioYAoQuadrado += numeros.doubleValue();
+        }
+        //Calculando a0 e a1
+        a0 = ((somatarioXAoQuadrado*somatorioY) - (somatorioX*somatarioXVezesY)) / ((tamanho*somatarioXAoQuadrado) - Math.pow(somatorioX, 2));
+        a1 = ((tamanho*somatarioXVezesY) - (somatorioX*somatorioY)) / ((tamanho*somatarioXAoQuadrado) - Math.pow(somatorioX, 2));
+
+        //System.out.println("a0 = "+ a0);
+        //System.out.println("a1 = "+ a1);
+
+        //Preenchendo a tabela do yAjustado e yMenosYAjustadoAoQuadrado
+        for(int i = 0; i < tamanho; i++){
+            yAjustado.add(a0+(a1*x.get(i).doubleValue()));
+            yMenosYAjustadoAoQuadrado.add(Math.pow(y.get(i).doubleValue() - yAjustado.get(i).doubleValue(), 2));
         }
 
-        for(var36 = xAoQuadrado.iterator(); var36.hasNext(); somatarioXAoQuadrado += numeros) {
-            numeros = (Double)var36.next();
+        //Somatorio de yAjustado e yMenosYAjustadoAoQuadrado
+        for(Double numeros: yAjustado){
+            somatorioYAjustado += numeros.doubleValue();
+        }
+        for(Double numeros: yMenosYAjustadoAoQuadrado){
+            somatorioYMenosYAjustadoAoQuadrado += numeros.doubleValue();
         }
 
-        for(var36 = xVezesY.iterator(); var36.hasNext(); somatarioXVezesY += numeros) {
-            numeros = (Double)var36.next();
+        a = a0;
+        b = a1;
+
+        if(a1 < 0 ){
+            //System.out.println("y = "+a+b+"/x");
+        }else{
+            //System.out.println("y = "+a+"-"+b+"/x");
         }
 
-        for(var36 = yAoQuadrado.iterator(); var36.hasNext(); somatorioYAoQuadrado += numeros) {
-            numeros = (Double)var36.next();
-        }
-
-        a0 = (somatarioXAoQuadrado * somatorioY - somatorioX * somatarioXVezesY) / ((double)tamanho * somatarioXAoQuadrado - Math.pow(somatorioX, 2.0));
-        a1 = ((double)tamanho * somatarioXVezesY - somatorioX * somatorioY) / ((double)tamanho * somatarioXAoQuadrado - Math.pow(somatorioX, 2.0));
-
-        for(i = 0; i < tamanho; ++i) {
-            yAjustado.add(a0 + a1 * (Double)x.get(i));
-            yMenosYAjustadoAoQuadrado.add(Math.pow((Double)y.get(i) - (Double)yAjustado.get(i), 2.0));
-        }
-
-        for(var36 = yAjustado.iterator(); var36.hasNext(); somatorioYAjustado += numeros) {
-            numeros = (Double)var36.next();
-        }
-
-        for(var36 = yMenosYAjustadoAoQuadrado.iterator(); var36.hasNext(); somatorioYMenosYAjustadoAoQuadrado += numeros) {
-            numeros = (Double)var36.next();
-        }
-
-        if (a1 < 0.0) {
-        }
-
-        rAoQuadrado = 1.0 - (double)tamanho * somatorioYMenosYAjustadoAoQuadrado / ((double)tamanho * somatorioYAoQuadrado - Math.pow(somatorioYAjustado, 2.0));
+        rAoQuadrado = 1 - (tamanho*somatorioYMenosYAjustadoAoQuadrado) / (tamanho*somatorioYAoQuadrado - (Math.pow(somatorioYAjustado, 2)));
         System.out.println(rAoQuadrado);
     }
-
     public static void main(String[] args) {
-        ArrayList<Double> x = new ArrayList();
-        ArrayList<Double> y = new ArrayList();
+        ArrayList<Double> x = new ArrayList<>();
+        ArrayList<Double> y = new ArrayList<>();
         int tamanhoTabela = 0;
 
-        try {
+        //Leitura de arquivo
+        try{
             String path = "C://Users//Vhugo//OneDrive//Desktop//data.txt";
             File myFile = new File(path);
             Scanner lerArquivo = new Scanner(myFile);
             LineNumberReader linhaLeitura = new LineNumberReader(new FileReader(myFile));
             linhaLeitura.skip(myFile.length());
             int qtdLinha = linhaLeitura.getLineNumber();
-            tamanhoTabela = (qtdLinha + 1) / 2;
-
-            for(int i = 0; i < qtdLinha + 1; ++i) {
-                if (lerArquivo.hasNextLine()) {
-                    if (i <= qtdLinha / 2) {
+            tamanhoTabela = (qtdLinha+1) / 2 ;
+            for(int i = 0; i < qtdLinha+1; i++){
+                if(lerArquivo.hasNextLine()){
+                    if(i <= (qtdLinha/2)){
                         x.add(lerArquivo.nextDouble());
-                    } else {
+                    }else{
                         y.add(lerArquivo.nextDouble());
                     }
                 }
             }
-
             lerArquivo.close();
-        } catch (IOException var10) {
+        }catch (IOException e){
             System.out.println("Ocorreu um erro ao abrir o arquivo!");
-            var10.printStackTrace();
+            e.printStackTrace();
         }
+        //ajusteLinear(x, y, tamanhoTabela);
+        //ajusteExponencial(x, y, tamanhoTabela);
+        //ajusteLogaritmico(x, y, tamanhoTabela);
 
         ajustePotencial(x, y, tamanhoTabela);
+        //ajusteHiperbolico(x, y, tamanhoTabela);
+        //System.out.println(x.get(0).doubleValue());
+        //System.out.println(y.get(0).doubleValue());
+
     }
 }
