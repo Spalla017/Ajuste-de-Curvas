@@ -83,9 +83,16 @@ class NovaInterface extends JFrame {
         setVisible(true);
         setSize(800, 600);
         getContentPane().setBackground(new Color(187, 198, 218));
-        setTitle("Nova Interface");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
+
+        // Adiciona barra em destaque na parte superior
+        JPanel barraSuperior = new JPanel();
+        barraSuperior.setBackground(new Color(187, 198, 218)); // Cor de fundo da barra igual à cor da interface
+        barraSuperior.setBorder(BorderFactory.createMatteBorder(4, 4, 4, 4, Color.GREEN)); // Borda verde na parte superior
+        barraSuperior.setLayout(null); // Define o layout como null
+        barraSuperior.setBounds(40, 20, 700, 100); // Posiciona a barra na parte superior
+        add(barraSuperior);
 
         // Adicione aqui os componentes da nova interface ou faça o que for necessário
         // ...
