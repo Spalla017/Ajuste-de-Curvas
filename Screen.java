@@ -9,9 +9,11 @@ import java.io.FileReader;
 
 public class Screen extends JFrame implements ActionListener {
 
+    private JFrame novaInterface; // Adicionado atributo para a nova interface
+
     public Screen() {
         try {
-            //Configuração do tema
+            // Configuração do tema
             UIManager.put("nimbusBase", new Color(136, 168, 218));
             UIManager.put("nimbusBlueGrey", new Color(119, 165, 227));
             UIManager.put("control", new Color(119, 165, 227));
@@ -21,7 +23,7 @@ public class Screen extends JFrame implements ActionListener {
             e.printStackTrace();
         }
 
-        //Configurações da janela
+        // Configurações da janela inicial
         setVisible(true);
         setSize(500, 500);
         getContentPane().setBackground(new Color(187, 198, 218));
@@ -29,7 +31,7 @@ public class Screen extends JFrame implements ActionListener {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        //Configuração do Botão
+        // Configuração do Botão
         setLayout(null);
         JButton botao = new JButton("SELECIONAR");
         botao.setBounds(110, 200, 250, 70);
@@ -37,7 +39,7 @@ public class Screen extends JFrame implements ActionListener {
         add(botao);
         botao.addActionListener(this);
 
-        //Configuração do Texto acima do Botão
+        // Configuração do Texto acima do Botão
         JLabel labelTexto = new JLabel("Clique no botão para selecionar o arquivo '.txt'");
         labelTexto.setBounds(67, 150, 400, 30);
         labelTexto.setFont(new Font("Arial", Font.BOLD, 14));
@@ -56,16 +58,66 @@ public class Screen extends JFrame implements ActionListener {
             if (result == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
 
-                try (BufferedReader reader = new BufferedReader(new FileReader(selectedFile))) {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        // Faça o que quiser com cada linha do arquivo
-                        System.out.println(line);
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+                // Fecha a janela inicial
+                dispose();
+
+                // Cria a nova interface e passa a referência da tela inicial
+                novaInterface = new NovaInterface(selectedFile, this);
             }
         }
+    }
+
+    public static void main(String[] args) {
+        new Screen();
+    }
+}
+
+class NovaInterface extends JFrame {
+
+    private Screen telaInicial; // Adicionado atributo para a tela inicial
+
+    public NovaInterface(File selectedFile, Screen telaInicial) {
+        this.telaInicial = telaInicial;
+
+        // Configurações da nova janela
+        setVisible(true);
+        setSize(800, 600);
+        getContentPane().setBackground(new Color(187, 198, 218));
+        setTitle("Nova Interface");
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        // Adicione aqui os componentes da nova interface ou faça o que for necessário
+        // ...
+
+        // Exemplo de leitura do arquivo selecionado
+        try (BufferedReader reader = new BufferedReader(new FileReader(selectedFile))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // Faça o que quiser com cada linha do arquivo na nova interface
+                System.out.println(line);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        // Adiciona botão de voltar
+        setLayout(null);
+        JButton botaoVoltar = new JButton("VOLTAR");
+        botaoVoltar.setBounds(680, 510, 90, 40);
+        botaoVoltar.setFont(new Font("Arial", Font.BOLD, 12));
+        add(botaoVoltar);
+
+        // Adiciona ação para o botão de voltar
+        botaoVoltar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Fecha a nova interface
+                dispose();
+
+                // Reabre a tela inicial
+                telaInicial.setVisible(true);
+            }
+        });
     }
 }
