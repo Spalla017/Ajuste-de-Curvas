@@ -67,6 +67,8 @@ public class Screen extends JFrame implements ActionListener {
         }
     }
 
+    
+
     public static void main(String[] args) {
         new Screen();
     }
@@ -81,18 +83,67 @@ class NovaInterface extends JFrame {
 
         // Configurações da nova janela
         setVisible(true);
-        setSize(800, 600);
+        setSize(800, 700);
         getContentPane().setBackground(new Color(187, 198, 218));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Adiciona barra em destaque na parte superior
-        JPanel barraSuperior = new JPanel();
-        barraSuperior.setBackground(new Color(187, 198, 218)); // Cor de fundo da barra igual à cor da interface
-        barraSuperior.setBorder(BorderFactory.createMatteBorder(4, 4, 4, 4, Color.GREEN)); // Borda verde na parte superior
-        barraSuperior.setLayout(null); // Define o layout como null
-        barraSuperior.setBounds(40, 20, 700, 100); // Posiciona a barra na parte superior
-        add(barraSuperior);
+        // Adiciona a barra 1 em destaque
+        JPanel barraSuperior1 = new JPanel();
+        barraSuperior1.setBackground(new Color(187, 198, 218)); // Cor de fundo da barra igual à cor da interface
+        barraSuperior1.setBorder(BorderFactory.createMatteBorder(4, 4, 4, 4, Color.GREEN)); // Borda verde na parte superior
+        barraSuperior1.setLayout(null); // Define o layout como null
+        barraSuperior1.setBounds(40, 20, 700, 70); // Posiciona a barra na parte superior
+        add(barraSuperior1);
+        
+        // Adiciona a barra 2 em destaque
+        JPanel barraSuperior2 = new JPanel();
+        barraSuperior2.setBackground(new Color(187, 198, 218)); // Cor de fundo da barra igual à cor da interface
+        barraSuperior2.setBorder(BorderFactory.createMatteBorder(4, 4, 4, 4, Color.GREEN)); // Borda verde na parte superior
+        barraSuperior2.setLayout(null); // Define o layout como null
+        barraSuperior2.setBounds(40, 100, 700, 70); // Posiciona a barra na parte superior
+        add(barraSuperior2);
+
+        // Adiciona a barra 3 em destaque
+        JPanel barraSuperior3 = new JPanel();
+        barraSuperior3.setBackground(new Color(187, 198, 218)); // Cor de fundo da barra igual à cor da interface
+        barraSuperior3.setBorder(BorderFactory.createMatteBorder(4, 4, 4, 4, Color.GREEN)); // Borda verde na parte superior
+        barraSuperior3.setLayout(null); // Define o layout como null
+        barraSuperior3.setBounds(40, 180, 700, 70); // Posiciona a barra na parte superior
+        add(barraSuperior3);
+
+        // Adiciona a barra 4 em destaque
+        JPanel barraSuperior4 = new JPanel();
+        barraSuperior4.setBackground(new Color(187, 198, 218)); // Cor de fundo da barra igual à cor da interface
+        barraSuperior4.setBorder(BorderFactory.createMatteBorder(4, 4, 4, 4, Color.GREEN)); // Borda verde na parte superior
+        barraSuperior4.setLayout(null); // Define o layout como null
+        barraSuperior4.setBounds(40, 260, 700, 70); // Posiciona a barra na parte superior
+        add(barraSuperior4);
+
+        // Adiciona a barra 5 em destaque
+        JPanel barraSuperior5 = new JPanel();
+        barraSuperior5.setBackground(new Color(187, 198, 218)); // Cor de fundo da barra igual à cor da interface
+        barraSuperior5.setBorder(BorderFactory.createMatteBorder(4, 4, 4, 4, Color.GREEN)); // Borda verde na parte superior
+        barraSuperior5.setLayout(null); // Define o layout como null
+        barraSuperior5.setBounds(40, 340, 700, 70); // Posiciona a barra na parte superior
+        add(barraSuperior5);
+
+        // Adiciona a barra 6 em destaque
+        JPanel barraSuperior6 = new JPanel();
+        barraSuperior6.setBackground(new Color(187, 198, 218)); // Cor de fundo da barra igual à cor da interface
+        barraSuperior6.setBorder(BorderFactory.createMatteBorder(4, 4, 4, 4, Color.GREEN)); // Borda verde na parte superior
+        barraSuperior6.setLayout(null); // Define o layout como null
+        barraSuperior6.setBounds(40, 420, 700, 70); // Posiciona a barra na parte superior
+        add(barraSuperior6);
+
+        // Adiciona a barra 7 em destaque
+        JPanel barraSuperior7 = new JPanel();
+        barraSuperior7.setBackground(new Color(187, 198, 218)); // Cor de fundo da barra igual à cor da interface
+        barraSuperior7.setBorder(BorderFactory.createMatteBorder(4, 4, 4, 4, Color.GREEN)); // Borda verde na parte superior
+        barraSuperior7.setLayout(null); // Define o layout como null
+        barraSuperior7.setBounds(40, 500, 700, 70); // Posiciona a barra na parte superior
+        add(barraSuperior7);
+
 
         // Adicione aqui os componentes da nova interface ou faça o que for necessário
         // ...
@@ -111,7 +162,7 @@ class NovaInterface extends JFrame {
         // Adiciona botão de voltar
         setLayout(null);
         JButton botaoVoltar = new JButton("VOLTAR");
-        botaoVoltar.setBounds(680, 510, 90, 40);
+        botaoVoltar.setBounds(680, 610, 90, 40);
         botaoVoltar.setFont(new Font("Arial", Font.BOLD, 12));
         add(botaoVoltar);
 
